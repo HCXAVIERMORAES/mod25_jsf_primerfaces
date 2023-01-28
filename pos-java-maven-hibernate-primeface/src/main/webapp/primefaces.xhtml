@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+</h:head>
+
+<h:body>
+
+	<h:form>
+		<p:breadCrumb>
+			<p:menuitem />
+			<p:menuitem value="Página JSF" action="index.jsf" />
+			<p:menuitem value="Página PrimeFaces" action="primefaces.jsf" />
+		</p:breadCrumb>
+	</h:form>
+
+	<h:form id="formulario">
+		<h:messages showDetail="true" showSummary="false"
+			infoStyle="color:green; background:#BCD2EE;" />
+
+		<p:panelGrid columns="2">
+		
+			<p:outputLabel>Id: </p:outputLabel>
+			<p:inputText readonly="true"
+				value="#{usuarioPessoaManagedBean.usuarioPessoa.id}" />
+
+			<p:outputLabel>Nome: </p:outputLabel>
+			<p:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.nome}"
+				required="true" requiredMessage="Informe o nome" />
+
+			<p:outputLabel>Sobrenome: </p:outputLabel>
+			<p:inputText
+				value="#{usuarioPessoaManagedBean.usuarioPessoa.sobrenome}"
+				required="true" requiredMessage="Informe o sobrenome" />
+
+			<p:outputLabel>E-mail: </p:outputLabel>
+			<p:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.email}" />
+
+			<p:outputLabel>Idade: </p:outputLabel>
+			<p:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.idade}" />
+			
+			
+			<p:outputLabel>Sexo: </p:outputLabel>
+			<p:selectOneMenu value="#{usuarioPessoaManagedBean.usuarioPessoa.sexo}">
+				<f:selectItem itemValue="MASCULINO" itemLabel="Maiusculo"/>
+				<f:selectItem itemValue="FEMININO" itemLabel="Feminino"/>
+			</p:selectOneMenu>
+
+			<p:outputLabel>Login: </p:outputLabel>
+			<p:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.login}" />
+
+			<p:outputLabel>senha: </p:outputLabel>
+			<p:password value="#{usuarioPessoaManagedBean.usuarioPessoa.senha}" />
+		</p:panelGrid>
+		
+		<br />
+		<br />
+
+		<p:commandButton value="Salvar" ajax="false"
+			action="#{usuarioPessoaManagedBean.salvar}" />
+			
+		<p:commandButton value="Novo" immediate="true"
+			action="#{usuarioPessoaManagedBean.novo}" >
+			<f:ajax execute="@this" render="@form"/>
+		</p:commandButton>
+			
+		<br />
+		<br />
+
+		<p:dataTable value="#{usuarioPessoaManagedBean.list}" var="user"
+			cellpadding="15" border="1">
+			<f:facet name="header">Lista de Usuários</f:facet>
+			<p:column>
+				<f:facet name="header">Id</f:facet>
+				<h:outputText value="#{user.id}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">Nome</f:facet>
+				<h:outputText value="#{user.nome}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">sobrenome</f:facet>
+				<h:outputText value="#{user.sobrenome}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">E-Mail</f:facet>
+				<h:outputText value="#{user.email}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">Login</f:facet>
+				<h:outputText value="#{user.login}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">Idade</f:facet>
+				<h:outputText value="#{user.idade}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">Editar</f:facet>
+				<p:commandLink value="Editar" immediate="true">
+					<f:setPropertyActionListener value="#{user}"
+						target="#{usuarioPessoaManagedBean.usuarioPessoa}" />
+				</p:commandLink>
+			</p:column>
+			<p:column>
+				<f:facet name="header">Delete</f:facet>
+				<p:commandLink value="Excluir" immediate="true"
+					action="#{usuarioPessoaManagedBean.remover}">
+					<f:setPropertyActionListener value="#{user}"
+						target="#{usuarioPessoaManagedBean.usuarioPessoa}" />
+				</p:commandLink>
+			</p:column>
+
+		</p:dataTable>
+
+	</h:form>
+
+</h:body>
+
+
+</html>
