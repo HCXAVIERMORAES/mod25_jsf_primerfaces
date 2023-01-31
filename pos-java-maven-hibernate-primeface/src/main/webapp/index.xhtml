@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 <h:head>
 </h:head>
@@ -26,19 +27,19 @@
 				value="#{usuarioPessoaManagedBean.usuarioPessoa.id}" />
 
 			<h:outputLabel>Nome: </h:outputLabel>
-			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.nome}"
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.nome}" pt:placeholder="informe o nome"
 				required="true" requiredMessage="Informe o nome!" />
 
 			<h:outputLabel>Sobrenome: </h:outputLabel>
 			<h:inputText
-				value="#{usuarioPessoaManagedBean.usuarioPessoa.sobrenome}"
+				value="#{usuarioPessoaManagedBean.usuarioPessoa.sobrenome}" pt:placeholder="informe o sobrenome"
 				required="true" requiredMessage="Informe o sobrenome!" />
 
 			<h:outputLabel>E-mail: </h:outputLabel>
-			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.email}" />
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.email}" pt:placeholder="informe o e-mail"/>
 
 			<h:outputLabel>Idade: </h:outputLabel>
-			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.idade}" />
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.idade}" pt:placeholder="informe a idade"/>
 
 			<h:outputLabel>Sexo: </h:outputLabel>
 			<h:selectOneMenu
@@ -46,10 +47,43 @@
 				<f:selectItem itemValue="MASCULINO" />
 				<f:selectItem itemValue="FEMININO" />
 			</h:selectOneMenu>
+			
+			
+			<h:outputLabel>Cep: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.cep}" id="cepuser"
+					pt:placeholder="informe o cep e aperte TAB">
+				<f:ajax event="blur" execute="@this" 
+				render="logradouro complemento bairro localidade uf ibge gia ddd"
+				listener="#{usuarioPessoaManagedBean.pesquisaCep}"/>
+			</h:inputText>
+			
+			<h:outputLabel>Logradouro: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.logradouro}" id="logradouro" />
+			
+			<h:outputLabel>Complemento: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.complemento}" id="complemento" />
 
+			<h:outputLabel>Bairro: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.bairro}" id="bairro" />
+			
+			<h:outputLabel>localidade: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.localidade}" id="localidade" />
+			
+			<h:outputLabel>Estado: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.uf}" id="uf" />
+			
+			<h:outputLabel>Ibge: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.ibge}" id="ibge" />
+			
+			<h:outputLabel>Gia: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.gia}" id="gia" />
+			
+			<h:outputLabel>DDD: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.ddd}" id="ddd" />
+			
 			<h:outputLabel>Login: </h:outputLabel>
-			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.login}" />
-
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.login }" id="login" />
+			
 			<h:outputLabel>senha: </h:outputLabel>
 			<h:inputSecret
 				value="#{usuarioPessoaManagedBean.usuarioPessoa.senha}" />

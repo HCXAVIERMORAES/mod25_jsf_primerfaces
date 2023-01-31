@@ -30,7 +30,7 @@ public class TelefoneManageBean {
 		//pegando parametro da tela
 		String coduser = FacesContext.getCurrentInstance().getExternalContext().
 				getRequestParameterMap().get("codigouser");
-		user = daoUser.pesquisar(Long.parseLong(coduser ), UsuarioPessoa.class);
+		user = daoUser.pesquisar(Long.parseLong(coduser), UsuarioPessoa.class);
 		
 	}
 	

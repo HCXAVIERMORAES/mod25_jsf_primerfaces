@@ -4,8 +4,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
-<!-- xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" -->
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 <h:head>
 </h:head>
@@ -21,17 +21,14 @@
 	</h:form>
 
 	<h:form id="formulario">
-		<p:messages autoUpdate="true" showDetail="true" id="msg"
+		<h:messages showDetail="true" showSummary="false"
 			infoStyle="color:green; background:#BCD2EE;" />
-
-		<br/>
 
 		<p:panelGrid columns="2">
 
-			<p:outputLabel>ID: </p:outputLabel>
+			<p:outputLabel>Id: </p:outputLabel>
 			<p:inputText readonly="true"
 				value="#{usuarioPessoaManagedBean.usuarioPessoa.id}" />
-
 
 			<p:outputLabel>Nome: </p:outputLabel>
 			<p:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.nome}"
@@ -63,75 +60,76 @@
 
 		</p:panelGrid>
 
-		<br/>
-		<br/>
+		<br />
+		<br />
 
 		<p:commandButton value="Salvar" ajax="false"
 			action="#{usuarioPessoaManagedBean.salvar}" />
 
-		<p:commandButton value="Novo" immediate="true" 
+		<p:commandButton value="Novo" immediate="true"
 			action="#{usuarioPessoaManagedBean.novo}">
 			<f:ajax execute="@this" render="@form" />
 		</p:commandButton>
 
 		<br />
 		<br />
-	</h:form>
 
-	<h:form id="formtable">
-
-		<p:dataTable value="#{usuarioPessoaManagedBean.list}" var="user">
+		<p:dataTable value="#{usuarioPessoaManagedBean.list}" var="user"
+			cellpadding="15" border="1">
 			<f:facet name="header">Lista de Usuários</f:facet>
-			<p:column headerText="ID">
+			<p:column>
+				<f:facet name="header">Id</f:facet>
 				<h:outputText value="#{user.id}" />
 			</p:column>
-
-			<p:column headerText="Nome">
+			<p:column>
+				<f:facet name="header">Nome</f:facet>
 				<h:outputText value="#{user.nome}" />
 			</p:column>
-
-			<p:column headerText="Sobrenome">
+			<p:column>
+				<f:facet name="header">sobrenome</f:facet>
 				<h:outputText value="#{user.sobrenome}" />
 			</p:column>
-
-			<p:column headerText="E-mail">
+			<p:column>
+				<f:facet name="header">E-Mail</f:facet>
 				<h:outputText value="#{user.email}" />
 			</p:column>
-
-			<p:column headerText="Login">
+			<p:column>
+				<f:facet name="header">Login</f:facet>
 				<h:outputText value="#{user.login}" />
 			</p:column>
-
-			<p:column headerText="Idade">
+			<p:column>
+				<f:facet name="header">Idade</f:facet>
 				<h:outputText value="#{user.idade}" />
 			</p:column>
-
-			<p:column headerText="Editar">
+			
+			<p:column>
+				<f:facet name="header">Editar</f:facet>
 				<h:commandLink immediate="true" id="botaoeditar">
 					<h:graphicImage url="resources/img/editar.png" width="35" height="35"/>
 					<f:setPropertyActionListener value="#{user}"
 						target="#{usuarioPessoaManagedBean.usuarioPessoa}" />
-					<f:ajax execute="botaoeditar" render=":formulario" />
+					<f:ajax execute="botaoeditar" render="@form"/>
+				</h:commandLink>
+			</p:column>			 
+			
+			<p:column>
+				<f:facet name="header">Delete</f:facet>
+				<p:commandLink value="Excluir" immediate="true"
+					action="#{usuarioPessoaManagedBean.remover}">
+					<f:setPropertyActionListener value="#{user}"
+						target="#{usuarioPessoaManagedBean.usuarioPessoa}" />
+				</p:commandLink>
+			</p:column>
+			
+			
+			<p:column headerText="Telefones">
+				<h:commandLink immediate="true"
+					action="telefonesprimefaces.jsf" id="botaofone">
+					<h:graphicImage url="resources/img/fone.png" width="35" height="35"/>
+					<f:param name="codigouser" value="#{user.id}"/>
 				</h:commandLink>
 			</p:column>
 
-			<p:column headerText="Remover">
-				<h:commandLink immediate="true"
-					action="#{usuarioPessoaManagedBean.remover}" id="botaoremover">
-					<h:graphicImage url="resources/img/excluir-2.png" width="35" height="35"/>
-					<f:setPropertyActionListener value="#{user}"
-						target="#{usuarioPessoaManagedBean.usuarioPessoa}" />
-					<f:ajax execute="botaoremover" render="@form :formulario:msg"/>
-				</h:commandLink>
-			</p:column>
-			
-			<p:column headerText="Telefones">
-				<h:commandLink immediate="true" action="telefoneprimefaces.xhtml" id="botaofone">
-					<h:graphicImage url="resources/img/fone.png" width="35" height="35"/>
-					<f:param name="codigouser" value="#{user.id}" />
-				</h:commandLink>
-			</p:column>
-			
 		</p:dataTable>
 
 	</h:form>
