@@ -35,12 +35,13 @@
 				value="#{usuarioPessoaManagedBean.usuarioPessoa.sobrenome}" pt:placeholder="informe o sobrenome"
 				required="true" requiredMessage="Informe o sobrenome!" />
 
-			<h:outputLabel>E-mail: </h:outputLabel>
-			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.email}" pt:placeholder="informe o e-mail"/>
-
 			<h:outputLabel>Idade: </h:outputLabel>
 			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.idade}" pt:placeholder="informe a idade"/>
 
+			<h:outputLabel>Salário: </h:outputLabel>
+			<h:inputText value="#{usuarioPessoaManagedBean.usuarioPessoa.salario}" pt:placeholder="informe salário"/>
+			
+				
 			<h:outputLabel>Sexo: </h:outputLabel>
 			<h:selectOneMenu
 				value="#{usuarioPessoaManagedBean.usuarioPessoa.sexo}">
@@ -117,12 +118,7 @@
 				<f:facet name="header">sobrenome</f:facet>
 				<h:outputText value="#{user.sobrenome}" />
 			</h:column>
-			
-			<h:column>
-				<f:facet name="header">E-Mail</f:facet>
-				<h:outputText value="#{user.email}" />
-			</h:column>
-			
+					
 			<h:column>
 				<f:facet name="header">Login</f:facet>
 				<h:outputText value="#{user.login}" />

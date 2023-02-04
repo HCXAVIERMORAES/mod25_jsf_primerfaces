@@ -15,9 +15,14 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
+import org.primefaces.model.chart.BarChartModel;
+import org.primefaces.model.chart.ChartSeries;
+
 import com.google.gson.Gson;
 
+import dao.DaoEmail;
 import dao.DaoUsuario;
+import model.EmailUser;
 import model.UsuarioPessoa;
 
 /*@ManagedBean -> indica que é uma classe controller, dar um nome, mesmo da classe começando em minusculo
@@ -33,10 +38,28 @@ public class UsuarioPessoaManagedBean {
 	private List<UsuarioPessoa> list = new ArrayList<UsuarioPessoa>(); // receber os dados salvos
 	private DaoUsuario<UsuarioPessoa> daoGeneric = new DaoUsuario<UsuarioPessoa>(); //para deletar telefone
 	
+	private BarChartModel barChartModel = new BarChartModel();
+	
+	private EmailUser emailUser = new EmailUser(); //instancia-se o email 
+	
+	private DaoEmail<EmailUser> daoEmail = new DaoEmail<EmailUser>();//para salvar os emails
+	
 	//apos o managedBean ser construido na memoria esse metodo é chamado apenas uma vez
 	@PostConstruct
 	public void init() {
 		list = daoGeneric.listar(UsuarioPessoa.class);
+		
+		//iniciar para o grafico
+		ChartSeries userSalario = new ChartSeries(); //grupo de funcionarios
+		//userSalario.setLabel("Users");
+		
+		for (UsuarioPessoa usuarioPessoa : list) { //adiciona salarios para o grupo
+						
+			userSalario.set(usuarioPessoa.getNome(), usuarioPessoa.getSalario());//adiciona salarios	
+			
+		}
+		barChartModel.addSeries(userSalario);//adiciona ao grupo
+		barChartModel.setTitle("Gráfico de salários");//titulo do grafico
 	}
 	
 	//méetodo de pesquisar cep pelo ajax
@@ -76,6 +99,23 @@ public class UsuarioPessoaManagedBean {
 
 	
 	// set e get
+	
+	public void setEmailUser(EmailUser emailUser) {
+		this.emailUser = emailUser;
+	}
+	
+	public EmailUser getEmailUser() {
+		return emailUser;
+	}
+	
+	public void setBarChartModel(BarChartModel barChartModel) {
+		this.barChartModel = barChartModel;
+	}
+	
+	public BarChartModel getBarChartModel() {
+		return barChartModel;
+	}
+	
 	public UsuarioPessoa getUsuarioPessoa() {
 		return usuarioPessoa;
 	}
@@ -127,6 +167,33 @@ public class UsuarioPessoaManagedBean {
 			}
 		}
 		return "";
+	}
+	
+	//metodo para adicionar emails
+	public void addEmail() {
+		emailUser.setUsuarioPessoa(usuarioPessoa); //passando o usuario da linha
+		emailUser = daoEmail.updateMerge(emailUser); //salva e retorna a PK
+		usuarioPessoa.getEmails().add(emailUser);//adiciona o email na lista
+		emailUser = new EmailUser(); //prepara para cadastrar outor email
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, 
+						 "Resultado: ", "Email salvo com sucesso!"));
+	}
+	
+	//método para remover email
+	public void removerEmail() throws Exception {
+		String codigoemail = FacesContext.getCurrentInstance().getExternalContext().
+				getRequestParameterMap().get("codigoemail");//pegar o codigo do email
+		
+		EmailUser remover = new EmailUser();		
+		remover.setId(Long.parseLong(codigoemail)); //pega o id do banco
+		daoEmail.deletarPoId(remover);
+		usuarioPessoa.getEmails().remove(remover);	
+		
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, 
+						 "Resultado: ", "Email removido com sucesso!"));
+		
 	}
 
 }

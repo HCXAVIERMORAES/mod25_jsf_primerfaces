@@ -23,7 +23,6 @@ public class TesteHibernate {
 		 //inser os dados da classe
 		 pessoa.setNome("José");
 		 pessoa.setSobrenome("arruda");
-		 pessoa.setEmail("pc@gmail.com");
 		 pessoa.setIdade(33);
 		 pessoa.setLogin("teste");
 		 pessoa.setSenha("1234");
@@ -102,6 +101,7 @@ public class TesteHibernate {
 			
 			DaoGeneric<UsuarioPessoa> daoGeneric = new DaoGeneric<UsuarioPessoa>();
 			//iniciando uma lista
+			@SuppressWarnings("unchecked")
 			List<UsuarioPessoa> list = daoGeneric.getEntityManager()
 					  .createQuery(" from UsuarioPessoa where  nome = 'Julio'").getResultList(); /*retorna toda a lista
 					   												para retorna um especifico usar where*/
@@ -185,8 +185,10 @@ public class TesteHibernate {
 		}
 				
 //teste de salvar telefone
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testeGravarTelefone() {
+		@SuppressWarnings("rawtypes")
 		DaoGeneric  daoGeneric = new DaoGeneric(); //generico
 		
 		UsuarioPessoa pessoa = (UsuarioPessoa) daoGeneric.pesquisar(7L , UsuarioPessoa.class);
@@ -200,6 +202,7 @@ public class TesteHibernate {
 		daoGeneric.salvar(telefoneUser);
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testeConsultaTelefones() {
 		DaoGeneric  daoGeneric = new DaoGeneric(); //generico

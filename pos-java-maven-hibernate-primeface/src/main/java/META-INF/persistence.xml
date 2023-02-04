@@ -8,7 +8,7 @@
 		<!-- eliminando erro na classe chamando o pacote e classe -->
 		<class>model.UsuarioPessoa</class>
 		<class>model.TelefoneUser</class>
-	 	
+		<class>model.EmailUser</class>
 	 <properties>
 		<!-- dados de conexão com o banco, duvidas olhar a documentação do hibernate -->	
 			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
