@@ -44,20 +44,27 @@ public class UsuarioPessoaManagedBean {
 	
 	private DaoEmail<EmailUser> daoEmail = new DaoEmail<EmailUser>();//para salvar os emails
 	
+	private String campoPesquisa;//variavel para fazer a pesquisa de usuario
+	
 	//apos o managedBean ser construido na memoria esse metodo é chamado apenas uma vez
 	@PostConstruct
 	public void init() {
 		list = daoGeneric.listar(UsuarioPessoa.class);
 		
+		montarGrafico();
+	}
+
+	private void montarGrafico() {
+		barChartModel = new BarChartModel();
+				
 		//iniciar para o grafico
 		ChartSeries userSalario = new ChartSeries(); //grupo de funcionarios
-		//userSalario.setLabel("Users");
 		
 		for (UsuarioPessoa usuarioPessoa : list) { //adiciona salarios para o grupo
 						
-			userSalario.set(usuarioPessoa.getNome(), usuarioPessoa.getSalario());//adiciona salarios	
-			
+			userSalario.set(usuarioPessoa.getNome(), usuarioPessoa.getSalario());//adiciona salarios			
 		}
+		
 		barChartModel.addSeries(userSalario);//adiciona ao grupo
 		barChartModel.setTitle("Gráfico de salários");//titulo do grafico
 	}
@@ -100,6 +107,14 @@ public class UsuarioPessoaManagedBean {
 	
 	// set e get
 	
+	public void setCampoPesquisa(String campoPesquisa) {
+		this.campoPesquisa = campoPesquisa;
+	}
+	
+	public String getCampoPesquisa() {
+		return campoPesquisa;
+	}
+	
 	public void setEmailUser(EmailUser emailUser) {
 		this.emailUser = emailUser;
 	}
@@ -134,6 +149,8 @@ public class UsuarioPessoaManagedBean {
 	public String salvar() {
 		daoGeneric.salvar(usuarioPessoa);
 		list.add(usuarioPessoa); //adicionar na lista apos ser salvo
+		usuarioPessoa = new UsuarioPessoa();
+		init(); //recarrega o grafico apos salvar
 		FacesContext.getCurrentInstance().addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, "Informação: ", "Salvo com sucesso!"));// messagem com
 																									// Detail
@@ -153,6 +170,7 @@ public class UsuarioPessoaManagedBean {
 			//daoGeneric.deletarPoId(usuarioPessoa);
 			daoGeneric.removerUsuario(usuarioPessoa);	
 			list.remove(usuarioPessoa); //remove da lista
+			init();
 			usuarioPessoa = new UsuarioPessoa();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Informação: ", "Removido com sucesso!"));
@@ -192,8 +210,13 @@ public class UsuarioPessoaManagedBean {
 		
 		FacesContext.getCurrentInstance().addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, 
-						 "Resultado: ", "Email removido com sucesso!"));
-		
+						 "Resultado: ", "Email removido com sucesso!"));		
+	}
+	
+	//método  de pesquisar usuarios
+	public void pesquisar() {
+		list = daoGeneric.pesquisar(campoPesquisa);
+		montarGrafico(); //monta o grafico  comforme pesquisa
 	}
 
 }

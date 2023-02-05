@@ -18,7 +18,7 @@
 	</h:form>
 
 	<h:form id="formulario">
-		<p:messages showDetail="true" showSummary="false" id="msg"
+		<p:growl showDetail="true" showSummary="false" id="msg"
 			infoStyle="color:green; background:#BCD2EE;" />
 
 		<p:panelGrid columns="2">
@@ -26,13 +26,20 @@
 			<p:outputLabel value="#{telefoneManageBean.user.nome}" />
 
 			<p:outputLabel>Número: </p:outputLabel>
-			<p:inputText value="#{telefoneManageBean.telefone.numero}" required="true"
+			<p:inputMask value="#{telefoneManageBean.telefone.numero}"
+				mask="(99) 9 9999-9999" required="true"
 					 requiredMessage="Informe o número"/>
 
 
 			<p:outputLabel>Tipo: </p:outputLabel>
-			<p:inputText value="#{telefoneManageBean.telefone.tipo}" required="true"
-					 requiredMessage="Tipo obrigatorio" />
+			<p:selectOneMenu value="#{telefoneManageBean.telefone.tipo}" style="width:200" 
+				required="true" requiredMessage="Tipo obrigatorio">
+				<f:selectItem itemValue="RECADO" itemLabel="Recado"/>
+				<f:selectItem itemValue="CASA" itemLabel="Casa" />
+				<f:selectItem itemValue="CELULAR" itemLabel="Celular"/>	
+				<f:selectItem itemValue="TRABALHO" itemLabel="Trabalho"/>
+			</p:selectOneMenu>
+			
 		</p:panelGrid>
 		<br />
 
@@ -44,22 +51,23 @@
 	
 		<p:dataTable value="#{telefoneManageBean.user.telefoneUsers}" var="fone" id="tablefone">
 			
-			<p:column style="width:150px;">
+			<p:column width="20">
 				<f:facet name="header">Id</f:facet>
 				<h:outputText value="#{fone.id}" />
 			</p:column>
 			
-			<p:column>
+			<p:column width="280">
 				<f:facet name="header">Numero tel.</f:facet>
 				<h:outputText value="#{fone.numero}" />
 			</p:column>
 			
-			<p:column>
+			<p:column width="100">
 				<f:facet name="header">Tipo</f:facet>
 				<h:outputText value="#{fone.tipo}" />
 			</p:column>
 			
-			<p:column>
+			<p:column width="100">
+			 <center>
 				<f:facet name="header">Delete</f:facet>
 				<h:commandLink immediate="true"
 					action="#{telefoneManageBean.removeTelefone}" id="botaoremoverfone">
@@ -68,6 +76,7 @@
 						target="#{telefoneManageBean.telefone}" />
 					<f:ajax execute="botaoremoverfone" render="@form :formulario:msg"/>
 				</h:commandLink>
+				</center>
 			</p:column>
 		
 		</p:dataTable>
