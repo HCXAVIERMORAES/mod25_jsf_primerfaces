@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class UsuarioPessoa {
 	//private String email;
 	private String login;
 	private String senha;
-	private int idade;
+	private int idade;	
 	private String sexo;
 	
 	private Double salario;
@@ -51,6 +52,10 @@ public class UsuarioPessoa {
 	private  String  gia;
 	private  String  ddd;
 	
+	//trrabalhar com  imagem
+	@Column(columnDefinition = "text")
+	private String imagem;
+	
 	//deve-se criar a lista de telefone, onde 1 usuario pode ter varios telefones
 	@OneToMany(mappedBy = "usuarioPessoa",fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true )
 	private List<TelefoneUser> telefoneUsers = new ArrayList<TelefoneUser>();
@@ -59,6 +64,14 @@ public class UsuarioPessoa {
 	private List<EmailUser> emails = new ArrayList<EmailUser>();
 	
 	//set e get
+	
+	public void setImagem(String imagem) {
+		this.imagem = imagem;
+	}
+	
+	public String getImagem() {
+		return imagem;
+	}
 	
 	public void setEmails(List<EmailUser> emails) {
 		this.emails = emails;

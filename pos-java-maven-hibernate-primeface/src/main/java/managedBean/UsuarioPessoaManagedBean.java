@@ -1,12 +1,12 @@
 package managedBean;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -14,7 +14,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
 
@@ -22,6 +26,7 @@ import com.google.gson.Gson;
 
 import dao.DaoEmail;
 import dao.DaoUsuario;
+import datatablelazy.LazyDataTableModelUserPessoa;
 import model.EmailUser;
 import model.UsuarioPessoa;
 
@@ -35,7 +40,9 @@ public class UsuarioPessoaManagedBean {
 
 	private UsuarioPessoa usuarioPessoa = new UsuarioPessoa();
 	//	private DaoGeneric<UsuarioPessoa> daoGeneric = new DaoGeneric<UsuarioPessoa>();
-	private List<UsuarioPessoa> list = new ArrayList<UsuarioPessoa>(); // receber os dados salvos
+	//private List<UsuarioPessoa> list = new ArrayList<UsuarioPessoa>(); // receber os dados salvos(antes de implementar paginação)
+	//metodo para paginação
+	private LazyDataTableModelUserPessoa<UsuarioPessoa> list = new LazyDataTableModelUserPessoa<UsuarioPessoa>(); 
 	private DaoUsuario<UsuarioPessoa> daoGeneric = new DaoUsuario<UsuarioPessoa>(); //para deletar telefone
 	
 	private BarChartModel barChartModel = new BarChartModel();
@@ -49,7 +56,8 @@ public class UsuarioPessoaManagedBean {
 	//apos o managedBean ser construido na memoria esse metodo é chamado apenas uma vez
 	@PostConstruct
 	public void init() {
-		list = daoGeneric.listar(UsuarioPessoa.class);
+		//list = daoGeneric.listar(UsuarioPessoa.class);
+		list.load(0, 5, null, null, null);//modificado devido a paginação
 		
 		montarGrafico();
 	}
@@ -60,7 +68,7 @@ public class UsuarioPessoaManagedBean {
 		//iniciar para o grafico
 		ChartSeries userSalario = new ChartSeries(); //grupo de funcionarios
 		
-		for (UsuarioPessoa usuarioPessoa : list) { //adiciona salarios para o grupo
+		for (UsuarioPessoa usuarioPessoa : list.list) { //adiciona salarios para o grupo
 						
 			userSalario.set(usuarioPessoa.getNome(), usuarioPessoa.getSalario());//adiciona salarios			
 		}
@@ -139,16 +147,22 @@ public class UsuarioPessoaManagedBean {
 		this.usuarioPessoa = usuarioPessoa;
 	}
 
-	// é necessario ter o get da lista
+	/* é necessario ter o get da lista
 	public List<UsuarioPessoa> getList() {
 		//list = daoGeneric.listar(UsuarioPessoa.class); // inserido manualmente, para carregar a lista de dados
+		return list;
+	}*/
+	
+	public LazyDataTableModelUserPessoa<UsuarioPessoa> getList() {		
+		//list = daoGeneric.listar(UsuarioPessoa.class); // inserido manualmente, para carregar a lista de dados
+		montarGrafico();
 		return list;
 	}
 
 //método salvar - obs: é bom sempre retornar uma string
 	public String salvar() {
 		daoGeneric.salvar(usuarioPessoa);
-		list.add(usuarioPessoa); //adicionar na lista apos ser salvo
+		list.list.add(usuarioPessoa); //adicionar na lista apos ser salvo
 		usuarioPessoa = new UsuarioPessoa();
 		init(); //recarrega o grafico apos salvar
 		FacesContext.getCurrentInstance().addMessage(null,
@@ -169,7 +183,7 @@ public class UsuarioPessoaManagedBean {
 
 			//daoGeneric.deletarPoId(usuarioPessoa);
 			daoGeneric.removerUsuario(usuarioPessoa);	
-			list.remove(usuarioPessoa); //remove da lista
+			list.list.remove(usuarioPessoa); //remove da lista
 			init();
 			usuarioPessoa = new UsuarioPessoa();
 			FacesContext.getCurrentInstance().addMessage(null,
@@ -215,8 +229,41 @@ public class UsuarioPessoaManagedBean {
 	
 	//método  de pesquisar usuarios
 	public void pesquisar() {
-		list = daoGeneric.pesquisar(campoPesquisa);
+		//list = daoGeneric.pesquisar(campoPesquisa);
+		list.pesquisar(campoPesquisa);//da classe LazyData...
 		montarGrafico(); //monta o grafico  comforme pesquisa
+	}
+	
+	//método de upload
+	public void upload(FileUploadEvent image) {
+		String imagem = "data:image/png;base64," +
+				DatatypeConverter.printBase64Binary(image.getFile().getContents());//pega a imagem
+		usuarioPessoa.setImagem(imagem);
+		
+	}
+	
+	//metodo de Download
+	@SuppressWarnings("static-access")
+	public void download() throws IOException {
+		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().
+				getRequestParameterMap(); //para passar o fileDownloadId da pag.
+		
+		String fileDownloadID = params.get("fileDownloadId"); //chama o name do h:param
+		
+		UsuarioPessoa pessoa = daoGeneric.
+				pesquisar(Long.parseLong(fileDownloadID), UsuarioPessoa.class);//consulta ao BD	
+		
+		byte[] imagem = new Base64().decodeBase64(pessoa.getImagem().split("\\,")[1]);//prepara a imagem
+		
+		HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().
+				getResponse();
+		response.addHeader("Content-Disposition", "attachment; filename=download.png");//adicionando o cabeçalho a resposta
+		response.setContentType("application/octet-stream");//padrao
+		response.setContentLength(imagem.length);//tamanho da resposta
+		response.getOutputStream().write(imagem);//escrever a resposta
+		response.getOutputStream().flush();//manda tudo para a resposta
+		FacesContext.getCurrentInstance().responseComplete();//informa q resposta esta completa
+		
 	}
 
 }
